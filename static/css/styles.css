@@ -1,14 +1,10 @@
-/*
-  Colors: http://getuicolors.com
-*/
-
 /* Setup */
 :root {
   --black: #000000;
   --almost-black: #263238;
   --white: #ffffff;
   --almost-white: #FBFBFB;
-  --grey-light: #CFD8DC;
+  --grey-light: linear-gradient(90deg, rgba(54,217,182,1) 0%, rgba(32,152,126,1) 43%, rgba(0,212,255,1) 100%);
   --grey: #B0BEC5;
   --grey-medium: #78909C;
   --grey-dark: #455A64;
@@ -42,7 +38,7 @@ h1 {
   margin: 0.5em 0 1em;
   font-size: 26px;
   line-height: 1.2;
-  color: var(--almost-black);
+  color: rgba(32,152,126,1);
 }
 
 h2 {
@@ -155,21 +151,21 @@ label {
   outline: none;
   cursor: pointer;
   display: inline-block;
-  background: var(--primary);
+  background: linear-gradient(90deg, rgba(54,217,182,1) 0%, rgba(32,152,126,1) 43%, rgba(0,212,255,1) 100%);
   transition: color .15s ease, background-color .15s ease;
 }
 
 .btn:hover {
-  background: var(--primary-dark);
+  background: rgba(0,212,255,1);
 }
 
 .btn--secondary {
-  color: var(--almost-black);
-  background: var(--secondary);
+  color: white;
+  background: linear-gradient(90deg, rgba(54,217,182,1) 0%, rgba(32,152,126,1) 43%, rgba(0,212,255,1) 100%);
 }
 
 .btn--secondary:hover {
-  background: var(--secondary-dark);
+  background: rgba(0,212,255,1);
 }
 
 input[type=submit] {

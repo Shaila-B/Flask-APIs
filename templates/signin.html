@@ -1,13 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
   <div class="card-wrapper">
-
     <div class="card">
-
       <h1 class="center">Log In</h1>
-
-      <form name="login_form">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="notification is-danger">
+              {{ messages[0] }}
+          </div>
+      {% endif %}
+      {% endwith %}
+      <form name="login_form" method="post" action="/sign_in_form">
 
         <label for="email">Email</label>
         <input type="email" name="email" class="field" required>

@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, make_response, render_template, session, redirect
+from flask import Flask, request, jsonify, make_response, render_template, session, redirect, flash
+from flask_login import login_required, current_user, logout_user, login_user, LoginManager
 from functools import wraps
 from flask_sqlalchemy import SQLAlchemy
 import uuid
@@ -16,8 +17,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///user.db'
 db = SQLAlchemy(app)
 print(db)
 
-# login_manager = LoginManager()
-# login_manager.init_app(app)
+
+# TODO : Database Table For User
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,6 +28,9 @@ class User(db.Model):
     password = db.Column(db.String(80))
     admin = db.Column(db.Boolean)
 
+#====================================================================================================#
+#TODO: REST API's Starts Here ************************************************************************
+#====================================================================================================#
 
 def token_required(f):
     @wraps(f)
@@ -108,6 +112,7 @@ def create_user():
 
         return jsonify({'Status' : '201', 'Message' : 'User created successfully!'})
 
+
 @app.route('/user/<id>', methods=['PUT'])
 @token_required
 def admin_user(current_user, id):
@@ -158,25 +163,73 @@ def login():
 
     return make_response('Could not verify', 401, {'WWW-Authenticate' : 'Basic realm="Login required!"'})
 
+#====================================================================================================#
+#TODO: REST API's Ends Here **************************************************************************
+#====================================================================================================#
+
+
+
+# TODO : NORMAL WEBSITE UI - Pages Links
+
+# Decorators
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect('/')
+    return wrap
 
 @app.route('/')
 def index():
-    print('hello')
     return render_template('index.html')
+
+@app.route('/dashboard/')
+@login_required
+def dashboard():
+  return render_template('dashboard.html')
 
 @app.route('/signin')
 def signin():
-    print('signin')
     return render_template('signin.html')
 
-@app.route('/')
-def signin_form():
-    print('signin_form')
-    return render_template('/')
+@app.route('/sign_in_form', methods=['POST'])
+def sign_in_form():
+    email = request.form.get('email')
+    password = request.form.get('password')
+    user = User.query.filter_by(email=email).first()
+    if not user or not check_password_hash(user.password, password):
+        flash('Please check your login details and try again.')
+        return redirect('/signin')
+    return render_template('dashboard.html', user=user)
+
 
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
+@app.route('/sign_up_form', methods=['POST'])
+def sign_up_form():
+    email = request.form.get('email')
+    name = request.form.get('name')
+    password = request.form.get('password')
+    user = User.query.filter_by(email=email).first()
+    if user:
+        flash('Email address already exists')
+        return redirect('/signup')
+    hashed_password = generate_password_hash(password, method='sha256')
+    new_user = User(name=name, email=email, password=hashed_password, admin=False)
+    db.session.add(new_user)
+    db.session.commit()
+    return render_template('signin.html')
+
+@app.route('/signout')
+@login_required
+def signout():
+    flash('Logged Out Successfully!')
+    logout_user()
+    return redirect('/signout')
 
 if __name__ == '__main__':
     app.run(debug=True)

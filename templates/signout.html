@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="card-wrapper">
+    <div class="card">
+      <h1 class="center">Successfully SignOut!</h1>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          <div class="notification is-danger">
+              {{ messages[0] }}
+          </div>
+      {% endif %}
+      {% endwith %}
+
+    </div>
+  
+  </div>
+{% endblock %}
